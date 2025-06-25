@@ -2,6 +2,7 @@ package com.tavo.gadget_plus;
 
 import com.tavo.gadget_plus.Entities.BillEntity;
 import com.tavo.gadget_plus.Entities.OrderEntity;
+import com.tavo.gadget_plus.Entities.ProductEntity;
 import com.tavo.gadget_plus.Interfaces.BillRepository;
 import com.tavo.gadget_plus.Interfaces.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @SpringBootApplication
 public class GadgetPlusApplication implements CommandLineRunner {
@@ -28,21 +31,16 @@ public class GadgetPlusApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-		//this.orderRepository.findAll().forEach(order -> System.out.println(order));
+		var order = this.orderRepository.findById(1L).orElseThrow();
 
-		/*var bill = BillEntity.builder()
-				.rfc("UVWX0123456X")
-				.totalAmount(BigDecimal.TEN)
-				.id("b-20")
-				.build();
+		var product1 = ProductEntity.builder().quantity(BigInteger.ONE).build();
+		var product2 = ProductEntity.builder().quantity(BigInteger.TWO).build();
 
-		//this.billRepository.save(bill);
+		var products = List.of(product1, product2);
 
-		var order = OrderEntity.builder()
-				.createdAt(LocalDateTime.now())
-				.clientName("Alex Pereira")
-				.bill(bill)
-				.build();
-		this.orderRepository.save(order);*/
+		order.setProducts(products);
+
+		products.forEach(p -> p.setOrder(order));
+		this.orderRepository.save(order);
 	}
 }
